@@ -14,7 +14,7 @@ function validateRepositoryId(request, response, next) {
   const { id } = request.params;
 
   if (!isUuid(id)) {
-    return response.status(400).json({ error: "Repository not found." });
+    return response.status(400).json({ error: "Invalid Repository ID." });
   }
 
   return next();
@@ -43,6 +43,10 @@ app.put("/repositories/:id", (request, response) => {
 
   const repositoryIndex = repositories.findIndex(repositor => repositor.id === id);
 
+  if (repositoryIndex < 0) {
+    return response.status(400).json({ error: "Repository not found." });
+  }
+
   const repository = Object.assign(
     repositories[repositoryIndex],
     {
@@ -60,6 +64,10 @@ app.delete("/repositories/:id", (request, response) => {
 
   const repositoryIndex = repositories.findIndex(repositor => repositor.id === id);
 
+  if (repositoryIndex < 0) {
+    return response.status(400).json({ error: "Repository not found." });
+  }
+
   repositories.splice(repositoryIndex, 1);
 
   return response.status(204).send();
@@ -69,6 +77,10 @@ app.post("/repositories/:id/like", (request, response) => {
   const { id } = request.params;
 
   const repositoryIndex = repositories.findIndex(repository => repository.id === id);
+
+  if (repositoryIndex < 0) {
+    return response.status(400).json({ error: "Repository not found." });
+  }
 
   repositories[repositoryIndex].likes++;
 
